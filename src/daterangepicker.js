@@ -34,6 +34,12 @@ var link = function($scope, $element, $attributes, ngModel, $compile, $parse){
         return viewValue;
     });
 
+    ngModel.$render = function () {
+        if (!ngModel.$viewValue || !ngModel.$viewValue.startDate) return;
+        $element.val(formatted(ngModel.$viewValue));
+    };
+
+
     $scope.$watch($attributes.ngModel, function (modelValue) {
         if (!modelValue || (!modelValue.startDate)) {
             ngModel.$setViewValue({ startDate: moment().startOf('day').toDate(), endDate: moment().startOf('day').toDate() });
@@ -48,20 +54,13 @@ var link = function($scope, $element, $attributes, ngModel, $compile, $parse){
 
     $element.daterangepicker(options, function(start, end) {
         $scope.$apply(function () {
-            ngModel.$setViewValue({ startDate: start.toDate(), endDate: end.toDate() });
+            ngModel.$setViewValue({ startDate: start, endDate: end});
+            ngModel.$render();
         });
     });
 };
-angular.module('ngBootstrap.dateRangePicker', [])
-    .directive('ngDaterange', ['$compile', '$parse', function ($compile, $parse) {
-        return {
-            restrict: 'A',
-            require: 'ngModel',
-            link: function ($scope, $element, $attributes, ngModel) {
-                link($scope, $element, $attributes, ngModel, $compile, $parse);
-            }
-        };
-}]).directive('daterange',['$compile', '$parse', function ($compile, $parse) {
+angular.module('bootstrap.dateRangePicker', [])
+    .directive('daterange',['$compile', '$parse', function ($compile, $parse) {
         return {
             restrict: 'A',
             require: 'ngModel',
