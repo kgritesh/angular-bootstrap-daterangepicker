@@ -37,17 +37,21 @@ var link = function($scope, $element, $attributes, ngModel, $compile, $parse){
 
     };
 
-    $scope.$watch($attributes.ngModel, function (modelValue) {
-        if (!modelValue || (!modelValue.startDate)) {
-            ngModel.$setViewValue(null);
+    $scope.$watch(function(){
+           return ngModel.$modelValue;
+        }, function (modelValue) {
+            if (!modelValue || (!modelValue.startDate)) {
+                ngModel.$setViewValue(null);
+                ngModel.$render();
+                return;
+            }
+            $element.data('daterangepicker').setStartDate(modelValue.startDate);
+            $element.data('daterangepicker').setEndDate(modelValue.endDate);
+            $element.data('daterangepicker').updateView();
+            $element.data('daterangepicker').updateCalendars();
+            $element.data('daterangepicker').updateInputText();
+            ngModel.$setViewValue(modelValue);
             ngModel.$render();
-            return;
-        }
-        $element.data('daterangepicker').setStartDate(moment(modelValue.startDate));
-        $element.data('daterangepicker').setEndDate(moment(modelValue.endDate));
-        $element.data('daterangepicker').updateView();
-        $element.data('daterangepicker').updateCalendars();
-        $element.data('daterangepicker').updateInputText();
     });
 
     $element.daterangepicker(options);
@@ -65,6 +69,9 @@ angular.module('bootstrap.dateRangePicker', [])
         return {
             restrict: 'A',
             require: 'ngModel',
+            scope: {
+              ngChange: "&"
+            },
             link: function ($scope, $element, $attributes, ngModel) {
                 link($scope, $element, $attributes, ngModel, $compile, $parse);
             }
@@ -73,6 +80,9 @@ angular.module('bootstrap.dateRangePicker', [])
         return{
             restrict: 'E',
             require: '?ngModel',
+            scope: {
+              ngChange: "&"
+            },
             link: function($scope, $element, $attributes, ngModel){
                 if ($attributes.type !== 'daterange') return;
                 link($scope, $element, $attributes, ngModel, $compile, $parse);
