@@ -49,7 +49,6 @@ var link = function($scope, $element, $attributes, ngModel, $compile, $parse){
             $element.data('daterangepicker').setEndDate(modelValue.endDate);
             $element.data('daterangepicker').updateView();
             $element.data('daterangepicker').updateCalendars();
-            $element.data('daterangepicker').updateInputText();
             ngModel.$setViewValue(modelValue);
             ngModel.$render();
     });
@@ -67,24 +66,12 @@ var link = function($scope, $element, $attributes, ngModel, $compile, $parse){
 angular.module('bootstrap.dateRangePicker', [])
     .directive('daterange',['$compile', '$parse', function ($compile, $parse) {
         return {
-            restrict: 'A',
+            restrict: 'EA',
             require: 'ngModel',
             scope: {
               ngChange: "&"
             },
             link: function ($scope, $element, $attributes, ngModel) {
-                link($scope, $element, $attributes, ngModel, $compile, $parse);
-            }
-        };
-    }]).directive('input',['$compile', '$parse', function ($compile, $parse) {
-        return{
-            restrict: 'E',
-            require: '?ngModel',
-            scope: {
-              ngChange: "&"
-            },
-            link: function($scope, $element, $attributes, ngModel){
-                if ($attributes.type !== 'daterange') return;
                 link($scope, $element, $attributes, ngModel, $compile, $parse);
             }
         };
